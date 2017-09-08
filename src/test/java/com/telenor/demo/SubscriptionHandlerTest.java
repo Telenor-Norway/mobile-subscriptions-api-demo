@@ -35,6 +35,10 @@ public class SubscriptionHandlerTest {
         String list = subscriptionHandler.getAccountList(accessToken);
         assert (list!=null);
         assert(!list.isEmpty());
+
+        logger.info("Change a user reference");
+        String result = subscriptionHandler.changeUserReference(accessToken);
+        assert (result!=null);
     }
 
 
