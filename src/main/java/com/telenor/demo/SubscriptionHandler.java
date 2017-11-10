@@ -7,6 +7,7 @@ import javax.ws.rs.core.Form;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
+import java.util.Map;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -27,10 +28,6 @@ class SubscriptionHandler
 
     //The authentication mechanism prefix for the OAUTH token
     private static final String AUTH_HEADER_PREFIX_BEARER = "Bearer "; //note the space
-
-    //For demo purposes only. Get this from a secure, encrypted configuration file
-    //DO NOT put credentials in your code.
-    private static final String PROPERTIES_FILE = "credentials.properties";
 
     private String apiBaseUrl;
     private String clientId;
@@ -126,25 +123,19 @@ class SubscriptionHandler
     }
 
     SubscriptionHandler(){
-        Properties prop = new Properties();
-
         try {
-            // load the properties file
-            prop.load(getClass().getClassLoader().getResourceAsStream(PROPERTIES_FILE));
-
+            // Read from env variables
+            Map<String, String> env = System.getenv();
             // get the property values
-            apiBaseUrl = prop.getProperty("API_BASE_URL");
-            clientId = prop.getProperty("CLIENT_ID");
-            clientSecret = prop.getProperty("CLIENT_SECRET");
-            systemUsername = prop.getProperty("SYSTEM_USERNAME");
-            systemPassword = prop.getProperty("SYSTEM_PASSWORD");
-            testMSISDN = prop.getProperty("TEST_MSISDN");
+            apiBaseUrl = env.getOrDefault("API_BASE_URL", "https://api.telenor.no");
+            clientId = env.get("CLIENT_ID");
+            clientSecret = env.get("CLIENT_SECRET");
+            systemUsername = env.get("SYSTEM_USERNAME");
+            systemPassword = env.get("SYSTEM_PASSWORD");
+            testMSISDN = env.get("TEST_MSISDN");
             logger.log(Level.INFO, "clientId = %s",  clientId);
-
-
-        } catch (IOException ex) {
-
-            logger.log(Level.SEVERE, "Couldn't read the credentials: %s", ex.getMessage());
+        } catch (Exception ex) {
+            logger.log(Level.SEVERE, "Problem reading credentials from env-variables: %s", ex.getMessage());
             System.exit(1);
         }
 

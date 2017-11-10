@@ -1,12 +1,1 @@
-# Logs
-logs
-*.log
-
-
-# Intellij
-/.idea/
-*/target/**
-*.iml
-
-
-
+target
